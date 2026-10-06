@@ -4,6 +4,8 @@ import config from "../config";
 function Header({ profile }) {
   const [ready, setReady] = React.useState(false);
 
+  if (!profile) return null;
+
   // Most stupid solution. But it works
   React.useEffect(() => {
     setTimeout(() => {

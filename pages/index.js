@@ -36,16 +36,16 @@ export const getServerSideProps = async () => {
       getUserData(),
     ]);
 
-    blogData.reverse();
     return {
       props: {
-        blogData,
-        profileData,
+        blogData: (blogData || []).reverse(),
+        profileData: profileData || null,
       },
     };
   } catch (error) {
+    console.error("getServerSideProps failed:", error);
     return {
-      props: {},
+      props: { blogData: [], profileData: null },
     };
   }
 };

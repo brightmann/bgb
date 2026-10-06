@@ -13,6 +13,7 @@ import Footer from "../../components/footer";
 
 
 function DetailView({ blogData, router }) {
+  if (!blogData) return null;
   React.useEffect(() => {
     hljs.initHighlightingOnLoad();
     document.title = `${blogData.title} - ${config.username}'s blog`;
@@ -64,11 +65,16 @@ DetailView.getInitialProps = async ({ query: { blog }, res }) => {
   const blogNumber = blog[blog.length - 1];
   try {
     const blogData = await getSingleBlogData(blogNumber);
+    if (!blogData) {
+      redirect({ res, location: `/?notFound=true` });
+      return { blogData: null };
+    }
     return {
       blogData
     };
   } catch (err) {
     redirect({ res, location: `/?notFound=true` });
+    return { blogData: null };
   }
 };
 

@@ -1,3 +1,4 @@
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 import config from "../config";
 
 String.prototype.capitalizeWords = function () {
@@ -7,6 +8,21 @@ String.prototype.capitalizeWords = function () {
     })
     .join(" ");
 };
+
+// Read the GitHub token from the Cloudflare request context when running on
+// Workers (immune to Next.js build-time env inlining); fall back to
+// process.env for local `next dev` / `next start`.
+function getToken() {
+  try {
+    const { env } = getCloudflareContext();
+    if (env && typeof env.GITHUB_TOKEN === "string" && env.GITHUB_TOKEN) {
+      return env.GITHUB_TOKEN;
+    }
+  } catch (_) {
+    // not inside a Cloudflare request context (e.g. local dev)
+  }
+  return process.env.GITHUB_TOKEN;
+}
 
 const GET_BLOG = (label = "blog") => `
   {
@@ -108,7 +124,7 @@ const graphql = async (query) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+      Authorization: `Bearer ${getToken()}`,
     },
     body: JSON.stringify({ query }),
   });

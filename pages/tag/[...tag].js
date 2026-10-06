@@ -22,14 +22,15 @@ TagView.getInitialProps = async ({ query: { tag } }) => {
       getBlogData(blogTag),
       getUserData()
     ]);
-    blogData.reverse();
     return {
-      blogData,
-      profileData
+      blogData: (blogData || []).reverse(),
+      profileData: profileData || null
     };
   } catch (error) {
     console.log(error);
     return {
+      blogData: [],
+      profileData: null,
       errors: error.errors
     };
   }
