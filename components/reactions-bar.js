@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./reactions-bar.styles.css";
+import styles from "./reactions-bar.module.css";
 
 function ReactionsBar({ reactionsData }) {
   const [reactions, setReactions] = React.useState({});

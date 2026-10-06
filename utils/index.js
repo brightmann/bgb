@@ -1,4 +1,3 @@
-import ApiService from "./ApiService";
 import { getBlogData, getUserData, getSingleBlogData } from "./ApiService";
 
 const redirect = params => {
@@ -16,4 +15,4 @@ const redirect = params => {
     }
   };
 
-export { ApiService, getBlogData, getUserData, getSingleBlogData, redirect};
+export { getBlogData, getUserData, getSingleBlogData, redirect};

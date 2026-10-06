@@ -61,7 +61,7 @@ function DetailView({ blogData, router }) {
 }
 
 DetailView.getInitialProps = async ({ query: { blog }, res }) => {
-  const [_, blogNumber] = blog;
+  const blogNumber = blog[blog.length - 1];
   try {
     const blogData = await getSingleBlogData(blogNumber);
     return {

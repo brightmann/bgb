@@ -16,7 +16,7 @@ function BlogList({ data }) {
 function BlogCard({ data }) {
   return (
     <div>
-      <Link href={{ pathname: `/blog/${data.title}/${data.number}` }}>
+      <Link href={{ pathname: `/blog/${data.number}` }}>
         <h2 className="uk-heading-bullet" style={{ cursor: "pointer" }}>
           {data.title}
         </h2>
@@ -45,7 +45,7 @@ function BlogCard({ data }) {
       </div>
       <p>{elipsis(data.bodyText, 300)}</p>
 
-      <Link href={{ pathname: `/blog/${data.title}/${data.number}` }}>
+      <Link href={{ pathname: `/blog/${data.number}` }}>
         <div className="uk-button uk-button-text">Read more</div>
       </Link>
     </div>

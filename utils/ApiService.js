@@ -1,4 +1,3 @@
-import Axios from "axios";
 import config from "../config";
 
 String.prototype.capitalizeWords = function () {
@@ -103,22 +102,27 @@ const GET_USER = `
   }
 }
 `;
-const ApiService = Axios.create({
-  baseURL: "https://api.github.com",
-  headers: {
-    Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
-  },
-});
+// Native fetch (axios's Node http adapter doesn't run on Cloudflare Workers)
+const graphql = async (query) => {
+  const res = await fetch("https://api.github.com/graphql", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+    },
+    body: JSON.stringify({ query }),
+  });
+  const data = await res.json();
+  if (!res.ok || data.errors) {
+    throw new Error((data.errors || [{ message: `GitHub API ${res.status}` }])[0].message);
+  }
+  return data.data;
+};
 
 const getBlogData = async (label = "blog") => {
   try {
-    const res = await ApiService.post("/graphql", {
-      query: GET_BLOG(label.capitalizeWords()),
-    });
-    if (res.data.errors) {
-      return Promise.reject({ errors: res.data.errors });
-    }
-    return Promise.resolve(res.data.data?.repository?.issues?.nodes);
+    const data = await graphql(GET_BLOG(label.capitalizeWords()));
+    return Promise.resolve(data?.repository?.issues?.nodes);
   } catch (err) {
     return Promise.reject({ error: err.message });
   }
@@ -126,11 +130,8 @@ const getBlogData = async (label = "blog") => {
 
 const getUserData = async () => {
   try {
-    const res = await ApiService.post("/graphql", { query: GET_USER });
-    if (res.data.errors) {
-      return Promise.reject({ errors: res.data.errors });
-    }
-    return Promise.resolve(res.data.data?.user);
+    const data = await graphql(GET_USER);
+    return Promise.resolve(data?.user);
   } catch (err) {
     return Promise.reject({ error: err.message });
   }
@@ -138,17 +139,11 @@ const getUserData = async () => {
 
 const getSingleBlogData = async (number) => {
   try {
-    const res = await ApiService.post("/graphql", {
-      query: GET_SINGLE_BLOG(number),
-    });
-    if (res.data.errors) {
-      return Promise.reject({ errors: res.data.errors });
-    }
-    return Promise.resolve(res.data.data?.repository?.issue);
+    const data = await graphql(GET_SINGLE_BLOG(number));
+    return Promise.resolve(data?.repository?.issue);
   } catch (err) {
     return Promise.reject({ error: err.message });
   }
 };
 
 export { getBlogData, getUserData, getSingleBlogData };
-export default ApiService;

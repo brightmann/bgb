@@ -3,7 +3,7 @@ import ReactionBar from "../reactions-bar";
 import Markdown from "markdown-to-jsx";
 import Moment from "moment";
 import { ArticleLink, FullScreenImage } from "../index";
-import styles from "./comment.styles.css";
+import styles from "./comment.module.css";
 
 function CommentList({ commentData }) {
   const { totalCount, nodes } = commentData;
