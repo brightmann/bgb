@@ -41,3 +41,4 @@ export default async function handler(req, res) {
   }
   res.status(200).json({ viaContext, contextError, viaProcessEnv: !!process.env.GITHUB_TOKEN, hasToken: !!token, apiOk, hasUser, apiError });
 }
+
