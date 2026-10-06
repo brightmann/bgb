@@ -118,12 +118,16 @@ const GET_USER = `
   }
 }
 `;
-// Native fetch (axios's Node http adapter doesn't run on Cloudflare Workers)
+// Native fetch (axios's Node http adapter doesn't run on Cloudflare Workers).
+// NOTE: GitHub's API rejects requests without a User-Agent header with
+// "403 Request forbidden by administrative rules" (plain text, not JSON),
+// and Workers' fetch sends no User-Agent by default — so we must set one.
 const graphql = async (query) => {
   const res = await fetch("https://api.github.com/graphql", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "User-Agent": "bgb-worker",
       Authorization: `Bearer ${getToken()}`,
     },
     body: JSON.stringify({ query }),
